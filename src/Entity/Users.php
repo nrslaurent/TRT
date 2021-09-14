@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UsersRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -51,6 +53,43 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $checkBy;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Companies::class, inversedBy="users")
+     */
+    private $company;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Jobs::class, mappedBy="createdBy", orphanRemoval=true)
+     */
+    private $jobsCreated;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Jobs::class, mappedBy="checkedBy")
+     */
+    private $jobsChecked;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $Validated;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Users::class, inversedBy="usersValidated")
+     */
+    private $ValidatedBy;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Users::class, mappedBy="ValidatedBy")
+     */
+    private $usersValidated;
+
+    public function __construct()
+    {
+        $this->jobsCreated = new ArrayCollection();
+        $this->jobsChecked = new ArrayCollection();
+        $this->usersValidated = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -173,6 +212,132 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCheckBy(?string $checkBy): self
     {
         $this->checkBy = $checkBy;
+
+        return $this;
+    }
+
+    public function getCompany(): ?Companies
+    {
+        return $this->company;
+    }
+
+    public function setCompany(?Companies $company): self
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Jobs[]
+     */
+    public function getJobsCreated(): Collection
+    {
+        return $this->jobsCreated;
+    }
+
+    public function addJobsCreated(Jobs $jobsCreated): self
+    {
+        if (!$this->jobsCreated->contains($jobsCreated)) {
+            $this->jobsCreated[] = $jobsCreated;
+            $jobsCreated->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJobsCreated(Jobs $jobsCreated): self
+    {
+        if ($this->jobsCreated->removeElement($jobsCreated)) {
+            // set the owning side to null (unless already changed)
+            if ($jobsCreated->getCreatedBy() === $this) {
+                $jobsCreated->setCreatedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Jobs[]
+     */
+    public function getJobsChecked(): Collection
+    {
+        return $this->jobsChecked;
+    }
+
+    public function addJobsChecked(Jobs $jobsChecked): self
+    {
+        if (!$this->jobsChecked->contains($jobsChecked)) {
+            $this->jobsChecked[] = $jobsChecked;
+            $jobsChecked->setCheckedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJobsChecked(Jobs $jobsChecked): self
+    {
+        if ($this->jobsChecked->removeElement($jobsChecked)) {
+            // set the owning side to null (unless already changed)
+            if ($jobsChecked->getCheckedBy() === $this) {
+                $jobsChecked->setCheckedBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getValidated(): ?bool
+    {
+        return $this->Validated;
+    }
+
+    public function setValidated(bool $Validated): self
+    {
+        $this->Validated = $Validated;
+
+        return $this;
+    }
+
+    public function getValidatedBy(): ?self
+    {
+        return $this->ValidatedBy;
+    }
+
+    public function setValidatedBy(?self $ValidatedBy): self
+    {
+        $this->ValidatedBy = $ValidatedBy;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getUsersValidated(): Collection
+    {
+        return $this->usersValidated;
+    }
+
+    public function addUsersValidated(self $usersValidated): self
+    {
+        if (!$this->usersValidated->contains($usersValidated)) {
+            $this->usersValidated[] = $usersValidated;
+            $usersValidated->setValidatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsersValidated(self $usersValidated): self
+    {
+        if ($this->usersValidated->removeElement($usersValidated)) {
+            // set the owning side to null (unless already changed)
+            if ($usersValidated->getValidatedBy() === $this) {
+                $usersValidated->setValidatedBy(null);
+            }
+        }
 
         return $this;
     }

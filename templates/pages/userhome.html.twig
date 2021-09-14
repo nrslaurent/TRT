@@ -11,7 +11,9 @@
     <div class="example-wrapper">
         <h1>Hello {{ user.getEmail() }}! ✅</h1>
         <a href="{{ path('app_logout') }}">Logout</a>
-        {# <p>{{ user.companyCreated.name}}</p> #}
+        {% if user.company is not null %}
+        <p>{{ user.company.name}}</p>
+        {% endif %}
 
     </div>
 {% endblock %}
