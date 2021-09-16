@@ -84,11 +84,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $usersValidated;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Jobs::class, mappedBy="Candidates")
+     */
+    private $jobsPostulated;
+
+
     public function __construct()
     {
         $this->jobsCreated = new ArrayCollection();
         $this->jobsChecked = new ArrayCollection();
         $this->usersValidated = new ArrayCollection();
+        $this->jobsPostulated = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -337,6 +344,33 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
             if ($usersValidated->getValidatedBy() === $this) {
                 $usersValidated->setValidatedBy(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Jobs[]
+     */
+    public function getJobsPostulated(): Collection
+    {
+        return $this->jobsPostulated;
+    }
+
+    public function addJobsPostulated(Jobs $jobsPostulated): self
+    {
+        if (!$this->jobsPostulated->contains($jobsPostulated)) {
+            $this->jobsPostulated[] = $jobsPostulated;
+            $jobsPostulated->addCandidate($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJobsPostulated(Jobs $jobsPostulated): self
+    {
+        if ($this->jobsPostulated->removeElement($jobsPostulated)) {
+            $jobsPostulated->removeCandidate($this);
         }
 
         return $this;

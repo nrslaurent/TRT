@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\JobsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -62,6 +64,16 @@ class Jobs
      * @ORM\ManyToOne(targetEntity=Users::class, inversedBy="jobsChecked")
      */
     private $checkedBy;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Users::class, inversedBy="jobsPostulated")
+     */
+    private $Candidates;
+
+    public function __construct()
+    {
+        $this->Candidates = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -172,6 +184,30 @@ class Jobs
     public function setCheckedBy(?Users $checkedBy): self
     {
         $this->checkedBy = $checkedBy;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Users[]
+     */
+    public function getCandidates(): Collection
+    {
+        return $this->Candidates;
+    }
+
+    public function addCandidate(Users $candidate): self
+    {
+        if (!$this->Candidates->contains($candidate)) {
+            $this->Candidates[] = $candidate;
+        }
+
+        return $this;
+    }
+
+    public function removeCandidate(Users $candidate): self
+    {
+        $this->Candidates->removeElement($candidate);
 
         return $this;
     }

@@ -40,6 +40,8 @@ class RegistrationController extends AbstractController
             } else{
                 $user->setRoles(['ROLE_USER']);
             };
+            //add validated value at false
+            $user->setValidated(false);
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);

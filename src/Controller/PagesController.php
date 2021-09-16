@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\JobsRepository;
 use App\Repository\UsersRepository;
 use mysql_xdevapi\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,13 +25,15 @@ class PagesController extends AbstractController
     /**
      * @Route("/userhome", name="userHome")
      */
-    public function show_userHome(UsersRepository $usersRepository): Response
+    public function show_userHome(UsersRepository $usersRepository, JobsRepository $jobsRepository): Response
     {
         if($this->getUser()){
             $email = $this->getUser()->getUserIdentifier() ;
             $user= $usersRepository->findOneBy(['email' => $email]);
+            $jobs = $jobsRepository->findBy(['createdBy' => $user]);
             return $this->render('pages/userhome.html.twig', [
                 'user' => $user,
+                'jobs' => $jobs
             ]);
         }
 

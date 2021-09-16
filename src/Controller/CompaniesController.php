@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Companies;
 use App\Form\CompaniesType;
 use App\Repository\CompaniesRepository;
+use App\Repository\UsersRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,11 +52,16 @@ class CompaniesController extends AbstractController
     /**
      * @Route("/{id}", name="companies_show", methods={"GET"})
      */
-    public function show(Companies $company): Response
+    public function show(Companies $company, UsersRepository $usersRepository): Response
     {
-        return $this->render('companies/show.html.twig', [
-            'company' => $company,
-        ]);
+        //check if it is the user's company
+        if ($company->getUsers()->contains($this->getUser())) {
+            return $this->render('companies/show.html.twig', [
+                'company' => $company,
+            ]);
+        } else {
+            return $this->redirectToRoute('home');
+        }
     }
 
     /**
@@ -63,19 +69,24 @@ class CompaniesController extends AbstractController
      */
     public function edit(Request $request, Companies $company): Response
     {
-        $form = $this->createForm(CompaniesType::class, $company);
-        $form->handleRequest($request);
+        //check if it is the user's company
+        if ($company->getUsers()->contains($this->getUser())) {
+            $form = $this->createForm(CompaniesType::class, $company);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('companies_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('companies_index', [], Response::HTTP_SEE_OTHER);
+            }
+
+            return $this->renderForm('companies/edit.html.twig', [
+                'company' => $company,
+                'form' => $form,
+            ]);
+        } else {
+            return $this->redirectToRoute('home');
         }
-
-        return $this->renderForm('companies/edit.html.twig', [
-            'company' => $company,
-            'form' => $form,
-        ]);
     }
 
     /**
@@ -83,12 +94,23 @@ class CompaniesController extends AbstractController
      */
     public function delete(Request $request, Companies $company): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$company->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($company);
-            $entityManager->flush();
-        }
+        //check if it is the user's company
+        if ($company->getUsers()->contains($this->getUser())) {
+            //check if he is the only user of this company
+            if ($company->getUsers()->containsKey(1)) {
+                return new Response('Cette société contient d\'autres recruteurs et ne peut pas être supprimée !');
+            } else {
+                if ($this->isCsrfTokenValid('delete'.$company->getId(), $request->request->get('_token'))) {
+                    $company->removeUser($this->getUser());
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->remove($company);
+                    $entityManager->flush();
+                }
+                return $this->redirectToRoute('companies_index', [], Response::HTTP_SEE_OTHER);
+            }
 
-        return $this->redirectToRoute('companies_index', [], Response::HTTP_SEE_OTHER);
+        } else {
+            return $this->redirectToRoute('home');
+        }
     }
 }

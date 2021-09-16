@@ -11,9 +11,15 @@
     <div class="example-wrapper">
         <h1>Hello {{ user.getEmail() }}! ✅</h1>
         <a href="{{ path('app_logout') }}">Logout</a>
+        <div><a href="{{ path('jobs_new') }}">Add a job</a></div>
         {% if user.company is not null %}
         <p>{{ user.company.name}}</p>
         {% endif %}
+        {% for job in jobs %}
+        <p>{{ job.title }}</p>
+        {% endfor %}
+
+
 
     </div>
 {% endblock %}

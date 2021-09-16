@@ -30,9 +30,12 @@ class UsersController extends AbstractController
      */
     public function show(Users $user): Response
     {
-        return $this->render('users/show.html.twig', [
-            'user' => $user,
-        ]);
+        if($user->getEmail() == $this->getUser()->getUserIdentifier()) {
+            return $this->render('users/show.html.twig', [
+                'user' => $user,
+            ]);
+        }
+        return $this->redirectToRoute('home');
     }
 
     /**

@@ -38,3 +38,6 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/jobs, roles: [ROLE_RECRUITER, ROLE_CONSULTANT] }
+        - { path: ^/companies, roles: [ROLE_RECRUITER, ROLE_CONSULTANT] }
+        - { path: ^/users, roles: ROLE_USER }
