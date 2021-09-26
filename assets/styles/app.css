@@ -1,6 +1,11 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 body {
     background-color: lightgray;
+    height: 1024px;
 }
 
+label{
+    margin-right: 1em;
+    margin-bottom: 1em;
+}
 

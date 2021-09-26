@@ -1,14 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello PagesController!{% endblock %}
+{% block title %}Nos offres d'emploi!{% endblock %}
 
 {% block body %}
-    <div class="card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="card-link">Card link</a>
-            <a href="#" class="card-link">Another link</a>
-        </div>
+
+    <div class="d-flex flex-row row">
+        {% for job in jobs %}
+            <div class="col-2">
+                <div class="card m-3" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ job.title }}</h5>
+                        <p class="card-text">{{ job.description }}</p>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target='#modal{{ job.id }}'>
+                            En savoir plus
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Modal -->
+            <div class="modal fade" id='modal{{ job.id }}' tabindex="-1" aria-labelledby="jobModal" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="jobModalLabel">{{ job.title }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {% block showJobModal %}
+                                {% include 'jobs/show.html.twig' %}
+                            {% endblock showJobModal %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            {% if user is not null %}
+                                {% set alreadyPostulated = 'false' %}
+                                {% for candidate in job.candidates %}
+                                    {% if candidate.email == user.userIdentifier %}
+                                        <p class="text-warning">déjà postulé!</p>
+                                        {% set alreadyPostulated = 'true' %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if alreadyPostulated == 'false'%}
+                                    {% set userRole = 'ROLE_USER' %}
+                                    {% for role in user.roles %}
+                                        {% if role == "ROLE_CONSULTANT" or role == "ROLE_RECRUITER" or role == "ROLE_ADMIN"%}
+                                            {% set userRole = 'OTHER_ROLE' %}
+                                        {% endif %}
+                                    {%endfor %}
+                                    {% if userRole == 'OTHER_ROLE' %}
+                                    {% else %}
+                                        <button type="button" class="btn btn-primary postulatedButton" jobId={{ job.id }} user=1>Je postule</button>
+                                    {% endif %}
+
+                                {% endif %}
+                            {% else %}
+                                <button type="button" class="btn btn-primary postulatedButton" jobId={{ job.id }} user=0>Je postule</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}

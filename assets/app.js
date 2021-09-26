@@ -16,3 +16,12 @@ require('bootstrap');
 import './bootstrap';
 
 
+$('.postulatedButton').click(function () {
+    let jobId = $(this).attr("jobId");
+    let userAuthenticated = $(this).attr("user");
+    if (userAuthenticated == 1) {
+        alert('Votre demande a été prise en compte, elle est en cours de validation.');
+    }
+    return [$(location).attr("href", '/jobs/postulate/'+jobId)];
+})
+

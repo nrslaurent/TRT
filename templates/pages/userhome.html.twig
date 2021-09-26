@@ -1,25 +1,68 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello Userhome page!{% endblock %}
+{% block title %}Espace utilisateur{% endblock %}
 
 {% block body %}
-    <style>
-        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-        .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    </style>
 
     <div class="example-wrapper">
-        <h1>Hello {{ user.getEmail() }}! ✅</h1>
-        <a href="{{ path('app_logout') }}">Logout</a>
-        <div><a href="{{ path('jobs_new') }}">Add a job</a></div>
+        <h1>Bonjour {{ user.getFirstname }},</h1>
+        {% include 'users/show.html.twig' %}
+        {% for role in user.roles %}
+            {% if role == "ROLE_RECRUITER" %}
+              <div><a href="{{ path('jobs_new') }}">Add a job</a></div>
+            {% endif %}
+        {% endfor %}
         {% if user.company is not null %}
         <p>{{ user.company.name}}</p>
         {% endif %}
-        {% for job in jobs %}
+        {% for job in jobsPostulated %}
         <p>{{ job.title }}</p>
         {% endfor %}
+        {% for role in user.roles %}
+            {% if role == "ROLE_CONSULTANT" %}
+                <div class="d-flex">
+                    {% for job in jobs %}
+                        {% if job.checkedBy is null %}
+                            <div class="w-25 table">
+                                {% include 'jobs/toValidate.html.twig' %}
+                                <a class="btn btn-success mx-5" href="{{ path('jobs_validate',{'id': job.id}) }}">Valider</a>
+                                <a class="btn btn-danger" href="{{ path('jobs_reject',{'id': job.id}) }}">Rejeter</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="d-flex">
+                    {% set userRole = "ROLE_USER" %}
+                    {% for user in users %}
+                        {% for role in user.roles %}
+                            {% if role == "ROLE_RECRUITER" %}
+                                {% set userRole = "ROLE_RECRUITER" %}
+                            {% endif %}
+                            {% if role == "ROLE_ADMIN" or role == "ROLE_CONSULTANT" %}
+                                {% set userRole = "ROLE_OTHER" %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if user.validatedBy is null and userRole != "ROLE_OTHER" %}
+                            <div class="w-25 table">
+                                {% include 'users/toValidate.html.twig' %}
+                                {% if userRole == 'ROLE_RECRUITER' %}
+                                    {% if user.company is not null %}
+                                        <p>RECRUTEUR</p>
+                                        <p>{{ user.company.name }} - {{ user.company.address }}</p>
+                                    {% endif%}
+                                {% endif %}
+                                <a class="btn btn-success" href="{{ path('users_validate',{'id': user.id}) }}">Valider</a>
+                                <a class="btn btn-danger" href="{{ path('users_reject',{'id': user.id}) }}">Rejeter</a>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
 
-
-
+            {% endif %}
+        {%endfor %}
+        <div class="m-5">
+            <a class="btn btn-primary" href="{{ path('home') }}">Revenir à la liste des offres</a>
+            <a class="btn btn-secondary mx-3" href="{{ path('app_logout') }}">Se déconnecter</a>
+        </div>
     </div>
 {% endblock %}

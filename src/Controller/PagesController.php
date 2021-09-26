@@ -4,39 +4,55 @@ namespace App\Controller;
 
 use App\Repository\JobsRepository;
 use App\Repository\UsersRepository;
-use mysql_xdevapi\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+
 
 class PagesController extends AbstractController
 {
     /**
      * @Route("/", name="home")
      */
-    public function index(UsersRepository $usersRepository): Response
+    public function index(JobsRepository $jobsRepository): Response
     {
+        $allJobs = $jobsRepository->findAll();
+        $jobs = array();
+        $jobsCandidates = array();
+        $user = $this->getUser();
+        foreach ($allJobs as $oneJob ) {
+            if ($oneJob->getPublished()) {
+                array_push($jobs, $oneJob);
+                array_push($jobsCandidates, [$oneJob->getTitle() => $oneJob->getCandidates()]);
+            }
+        }
         return $this->render('pages/home.html.twig', [
-            'controller_name' => 'PagesController',
+            'user' => $user,
+            'jobs' => $jobs,
+            'postulated' => $jobsCandidates
         ]);
     }
 
     /**
      * @Route("/userhome", name="userHome")
      */
-    public function show_userHome(UsersRepository $usersRepository, JobsRepository $jobsRepository): Response
+    public function show_userHome(JobsRepository $jobsRepository, UsersRepository $usersRepository): Response
     {
-        if($this->getUser()){
-            $email = $this->getUser()->getUserIdentifier() ;
-            $user= $usersRepository->findOneBy(['email' => $email]);
-            $jobs = $jobsRepository->findBy(['createdBy' => $user]);
-            return $this->render('pages/userhome.html.twig', [
-                'user' => $user,
-                'jobs' => $jobs
-            ]);
+        $user = $this->getUser();
+        $users = $usersRepository->findAll();
+        $jobs = $jobsRepository->findAll();
+        $postulatedJobs =  array();
+        //get all postulated jobs
+        foreach($jobs as $job) {
+            if($job->getCandidates()->contains($user)){
+                $postulatedJobs[] = $job;
+            }
         }
-
-        return new RedirectResponse('/');
+        return $this->render('pages/userhome.html.twig', [
+            'user' => $user,
+            'users' => $users,
+            'jobs' => $jobs,
+            'jobsPostulated' => $postulatedJobs
+        ]);
     }
 }

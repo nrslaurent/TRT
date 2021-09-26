@@ -50,11 +50,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private $lastname;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $checkBy;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Companies::class, inversedBy="users")
      */
     private $company;
@@ -207,18 +202,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastname(?string $lastname): self
     {
         $this->lastname = $lastname;
-
-        return $this;
-    }
-
-    public function getCheckBy(): ?string
-    {
-        return $this->checkBy;
-    }
-
-    public function setCheckBy(?string $checkBy): self
-    {
-        $this->checkBy = $checkBy;
 
         return $this;
     }

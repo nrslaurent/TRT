@@ -13,6 +13,7 @@
                 <th>Roles</th>
                 <th>Firstname</th>
                 <th>Lastname</th>
+                <th>Validated</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -24,18 +25,19 @@
                 <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
                 <td>{{ user.firstname }}</td>
                 <td>{{ user.lastname }}</td>
+                <td>{{ user.Validated ? 'Yes' : 'No' }}</td>
                 <td>
-                    <a href="{{ path('users_show', {'id': user.id}) }}">show</a>
-                    <a href="{{ path('users_edit', {'id': user.id}) }}">edit</a>
+                    <a href="{{ path('admin_show', {'id': user.id}) }}">show</a>
+                    <a href="{{ path('admin_edit', {'id': user.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="8">no records found</td>
+                <td colspan="9">no records found</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_register') }}">Create new</a>
+    <a href="{{ path('admin_new') }}">Create new consultant</a>
 {% endblock %}

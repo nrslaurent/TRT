@@ -1,18 +1,11 @@
-{% extends 'base.html.twig' %}
 
-{% block title %}Jobs{% endblock %}
 
 {% block body %}
-    <h1>Jobs</h1>
-
-    <table class="table">
-        <tbody>
+    <div class="m-5">
+        <table class="table-primary w-100 mb-5">
+            <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ job.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
+                <th>Intitulé</th>
                 <td>{{ job.title }}</td>
             </tr>
             <tr>
@@ -20,31 +13,20 @@
                 <td>{{ job.description }}</td>
             </tr>
             <tr>
-                <th>Address</th>
+                <th>Lieu de travail</th>
                 <td>{{ job.address }}</td>
             </tr>
             <tr>
-                <th>Hours</th>
+                <th>Les horaires</th>
                 <td>{{ job.hours }}</td>
             </tr>
             <tr>
-                <th>Salary</th>
+                <th>Le salaire</th>
                 <td>{{ job.salary }}</td>
             </tr>
-            <tr>
-                <th>Validated</th>
-                <td>{{ job.validated ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>Published</th>
-                <td>{{ job.published ? 'Yes' : 'No' }}</td>
-            </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
 
-    <a href="{{ path('jobs_index') }}">back to list</a>
 
-    <a href="{{ path('jobs_edit', {'id': job.id}) }}">edit</a>
-
-    {{ include('jobs/_delete_form.html.twig') }}
 {% endblock %}
