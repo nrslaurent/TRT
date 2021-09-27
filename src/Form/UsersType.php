@@ -24,7 +24,7 @@ class UsersType extends AbstractType
             ->add('lastname', TextType::class,['label' => "Nom", "required" => false])
             ->add('firstname', TextType::class,['label' => "Prénom", "required" => false])
             ->add('email',EmailType::class, ['label' => "Adresse email"])
-            ->add('password', PasswordType::class,['label' => "password","required" => false, "empty_data" => '','constraints' => [
+            ->add('password', PasswordType::class,['label' => "password","required" => false, "empty_data" => '$2y$13$029rQ3lnyigroXR2wsfdkevCrhjOPV.nd/rtLIoUf7ODQrd1dCGqe','constraints' => [
                 new Length([
                     'min' => 8,
                     'minMessage' => 'Le mot de passe doit avoir au moins {{ limit }} caractères',

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Companies;
+use App\Entity\Users;
 use App\Form\CompaniesType;
 use App\Repository\CompaniesRepository;
 use App\Repository\UsersRepository;
@@ -32,15 +33,19 @@ class CompaniesController extends AbstractController
     public function new(Request $request): Response
     {
         $company = new Companies();
+        $user = $this->getUser();
+        $user->setCompany($company);
         $form = $this->createForm(CompaniesType::class, $company);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($company);
+            $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('companies_index', [], Response::HTTP_SEE_OTHER);
+
+            return $this->redirectToRoute('userHome', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('companies/new.html.twig', [
@@ -77,7 +82,7 @@ class CompaniesController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $this->getDoctrine()->getManager()->flush();
 
-                return $this->redirectToRoute('companies_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('userHome', [], Response::HTTP_SEE_OTHER);
             }
 
             return $this->renderForm('companies/edit.html.twig', [

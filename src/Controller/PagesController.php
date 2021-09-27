@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\PostulatedJobs;
 use App\Repository\JobsRepository;
+use App\Repository\PostulatedJobsRepository;
 use App\Repository\UsersRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,11 +38,12 @@ class PagesController extends AbstractController
     /**
      * @Route("/userhome", name="userHome")
      */
-    public function show_userHome(JobsRepository $jobsRepository, UsersRepository $usersRepository): Response
+    public function show_userHome(JobsRepository $jobsRepository, UsersRepository $usersRepository, PostulatedJobsRepository $postulatedJobsRepository): Response
     {
         $user = $this->getUser();
         $users = $usersRepository->findAll();
         $jobs = $jobsRepository->findAll();
+        $postulatedJobsToValidate = $postulatedJobsRepository->findAll();
         $postulatedJobs =  array();
         //get all postulated jobs
         foreach($jobs as $job) {
@@ -52,7 +55,8 @@ class PagesController extends AbstractController
             'user' => $user,
             'users' => $users,
             'jobs' => $jobs,
-            'jobsPostulated' => $postulatedJobs
+            'jobsPostulated' => $postulatedJobs,
+            'postulatedJobsToValidate' => $postulatedJobsToValidate
         ]);
     }
 }

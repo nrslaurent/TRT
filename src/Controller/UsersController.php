@@ -37,6 +37,10 @@ class UsersController extends AbstractController
             return $this->render('users/show.html.twig', [
                 'user' => $user,
             ]);
+        }elseif ($this->getUser()->getRoles()[1] == 'ROLE_CONSULTANT' or $this->getUser()->getRoles()[1] == 'ROLE_RECRUITER') {
+            return $this->render('users/toValidate.html.twig', [
+                'user' => $user,
+            ]);
         }
         return $this->redirectToRoute('home');
     }
@@ -49,8 +53,8 @@ class UsersController extends AbstractController
         $form = $this->createForm(UsersType::class, $user);
         $oldPassword = $user->getPassword();
         $form->handleRequest($request);
-        if ($form->isSubmitted()) {
-            if ($form->get('password')->getData() == null) {
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('password')->getData() == '$2y$13$029rQ3lnyigroXR2wsfdkevCrhjOPV.nd/rtLIoUf7ODQrd1dCGqe') {
                 $user->setPassword($oldPassword);
             } else {
                 $user->setPassword(
@@ -82,13 +86,13 @@ class UsersController extends AbstractController
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_logout', [], Response::HTTP_SEE_OTHER);
     }
 
     /**
      * @Route("/validate/{id}", name="users_validate", methods={"GET"})
      */
-    public function validate($id,JobsRepository $jobsRepository,UsersRepository  $usersRepository): Response
+    public function validate($id,UsersRepository  $usersRepository): Response
     {
         $user = $this->getUser();
         $userToValidate = $usersRepository->find($id);
@@ -98,22 +102,13 @@ class UsersController extends AbstractController
         $entityManager->persist($userToValidate);
         $entityManager->flush();
 
-        $jobs = $jobsRepository->findAll();
-        $users = $usersRepository->findAll();
-        $postulatedJobs =  array();
-        return $this->render('pages/userhome.html.twig', [
-            'user' => $user,
-            'users' => $users,
-            'jobs' => $jobs,
-            'jobsPostulated' => $postulatedJobs
-        ]);
-        return $this->redirectToRoute('pages/userhome.html.twig');
+        return $this->redirectToRoute('userHome');
     }
 
     /**
      * @Route("/reject/{id}", name="users_reject", methods={"GET"})
      */
-    public function reject($id, JobsRepository $jobsRepository, UsersRepository $usersRepository): Response
+    public function reject($id, UsersRepository $usersRepository): Response
     {
         $user = $this->getUser();
         $userToValidate = $usersRepository->find($id);
@@ -123,15 +118,7 @@ class UsersController extends AbstractController
         $entityManager->persist($userToValidate);
         $entityManager->flush();
 
-        $jobs = $jobsRepository->findAll();
-        $users = $usersRepository->findAll();
-        $postulatedJobs =  array();
-        return $this->render('pages/userhome.html.twig', [
-            'user' => $user,
-            'users' => $users,
-            'jobs' => $jobs,
-            'jobsPostulated' => $postulatedJobs
-        ]);
-        return $this->redirectToRoute('pages/userhome.html.twig');
+
+        return $this->redirectToRoute('userHome');
     }
 }

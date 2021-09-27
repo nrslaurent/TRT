@@ -18,10 +18,22 @@ import './bootstrap';
 
 $('.postulatedButton').click(function () {
     let jobId = $(this).attr("jobId");
-    let userAuthenticated = $(this).attr("user");
-    if (userAuthenticated == 1) {
-        alert('Votre demande a été prise en compte, elle est en cours de validation.');
+    let authenticatedUser = $(this).attr("user");
+    let validatedUser = $(this).attr("validatedUser");
+    if (authenticatedUser == 1) {
+        if (validatedUser == 0) {
+            alert('Votre compte dot avoir été validé avant de pouvoir postuler!');
+        }else {
+            alert('Votre demande a été prise en compte, elle est en cours de validation.');
+            return [$(location).attr("href", '/jobs/postulate/'+jobId)];
+        }
+    } else {
+        return alert('vous devez être connecté pour pouvoir postuler!');
     }
-    return [$(location).attr("href", '/jobs/postulate/'+jobId)];
 })
+
+
+
+
+
 

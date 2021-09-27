@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Jobs;
+use App\Entity\PostulatedJobs;
 use App\Entity\Users;
 use App\Form\JobsType;
 use App\Repository\JobsRepository;
+use App\Repository\PostulatedJobsRepository;
 use App\Repository\UsersRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,7 +48,7 @@ class JobsController extends AbstractController
             $entityManager->persist($job);
             $entityManager->flush();
 
-            return $this->redirectToRoute('jobs_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('userHome', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('jobs/new.html.twig', [
@@ -86,7 +88,7 @@ class JobsController extends AbstractController
                 'form' => $form,
             ]);
         }else {
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('userHome');
         }
     }
 
@@ -97,8 +99,13 @@ class JobsController extends AbstractController
     {
         $user = $this->getUser();
         $job->addCandidate($user);
+        //add job and user in PostulatedJobs table which is used to validate user's candidacy (by a consultant)
+        $postulatedJob = new PostulatedJobs();
+        $postulatedJob->setJob($job);
+        $postulatedJob->setCandidate($user);
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($job);
+        $entityManager->persist($postulatedJob);
         $entityManager->flush();
 
         //get all postulated jobs
@@ -111,11 +118,7 @@ class JobsController extends AbstractController
                 array_push($jobsCandidates, [$oneJob->getTitle() => $oneJob->getCandidates()]);
             }
         }
-        return $this->render('pages/home.html.twig', [
-            'user' => $user,
-            'jobs' => $jobs,
-            'postulated' => $jobsCandidates
-        ]);
+        return $this->redirectToRoute('home');
     }
 
     /**
@@ -139,7 +142,7 @@ class JobsController extends AbstractController
     /**
      * @Route("/validate/{id}", name="jobs_validate", methods={"GET"})
      */
-    public function validate(Jobs $job, JobsRepository $jobsRepository, UsersRepository $usersRepository): Response
+    public function validate(Jobs $job): Response
     {
         $user = $this->getUser();
         $job->setCheckedBy($user);
@@ -149,22 +152,13 @@ class JobsController extends AbstractController
         $entityManager->persist($job);
         $entityManager->flush();
 
-        $jobs = $jobsRepository->findAll();
-        $users = $usersRepository->findAll();
-        $postulatedJobs =  array();
-        return $this->render('pages/userhome.html.twig', [
-            'user' => $user,
-            'users' => $users,
-            'jobs' => $jobs,
-            'jobsPostulated' => $postulatedJobs
-        ]);
-        return $this->redirectToRoute('pages/userhome.html.twig');
+        return $this->redirectToRoute('userHome');
     }
 
     /**
      * @Route("/reject/{id}", name="jobs_reject", methods={"GET"})
      */
-    public function reject(Jobs $job, JobsRepository $jobsRepository, UsersRepository $usersRepository): Response
+    public function reject(Jobs $job): Response
     {
         $user = $this->getUser();
         $job->setCheckedBy($user);
@@ -174,15 +168,36 @@ class JobsController extends AbstractController
         $entityManager->persist($job);
         $entityManager->flush();
 
-        $jobs = $jobsRepository->findAll();
-        $users = $usersRepository->findAll();
-        $postulatedJobs =  array();
-        return $this->render('pages/userhome.html.twig', [
-            'user' => $user,
-            'users' => $users,
-            'jobs' => $jobs,
-            'jobsPostulated' => $postulatedJobs
-        ]);
-        return $this->redirectToRoute('pages/userhome.html.twig');
+        return $this->redirectToRoute('userHome');
+    }
+
+    /**
+     * @Route("/PostulatedJob/validate/{id}", name="PostulatedJob_validate", methods={"GET"})
+     */
+    public function PostulatedJob_validate(PostulatedJobs $postulatedJobs): Response
+    {
+        $user = $this->getUser();
+        $postulatedJobs->setCheckedBy($user);
+        $postulatedJobs->setValidated(true);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($postulatedJobs);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('userHome');
+    }
+
+    /**
+     * @Route("/PostulatedJob/reject/{id}", name="PostulatedJob_reject", methods={"GET"})
+     */
+    public function PostulatedJob_reject(PostulatedJobs $postulatedJobs): Response
+    {
+        $user = $this->getUser();
+        $postulatedJobs->setCheckedBy($user);
+        $postulatedJobs->setValidated(false);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($postulatedJobs);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('userHome');
     }
 }

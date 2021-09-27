@@ -20,7 +20,17 @@
             </tr>
         </tbody>
     </table>
+    <div>
+        <a href="{{ path('users_edit', {'id': user.id}) }}">Mettre à jour mon compte</a>
+    </div>
+    {% for role in user.roles%}
+        {% if role == 'ROLE_RECRUITER' and user.company is null %}
+            <div><a href="{{ path('companies_new') }}">Ajouter une société</a> </div>
+        {% elseif role == 'ROLE_RECRUITER' and user.company is not null %}
+                <div class="mt-5"><span class="text-secondary fw-bold">Société représentée: </span><a href="{{ path('companies_show', {'id':user.company.id}) }}">{{ user.company.name}}</a></div>
+        {% endif %}
+    {% endfor %}
 
-    <a href="{{ path('users_edit', {'id': user.id}) }}">Mettre à jour ou supprimer mon compte</a>
+
 
 {% endblock %}

@@ -7,7 +7,7 @@
 
     {{ include('admin/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('admin_index') }}">back to list</a>
-
     {{ include('admin/_delete_form.html.twig') }}
+
+    <a href="{{ path('admin_index') }}">revenir à l'espace d'administration</a>
 {% endblock %}

@@ -48,7 +48,10 @@ class RegistrationController extends AbstractController
             $entityManager->flush();
             // do anything else you need here, like send an email
 
-            return $this->redirectToRoute('home');
+            return new Response('<html><body>
+                <div style="font-size: large; color: dodgerblue; text-align: center">Votre demande d\'inscription a été prise en compte, elle est en cours de validation.</div>
+                <div><a href="/">Revenir à la page d\'accueil</a></div>
+                </body></html>');
         }
 
         return $this->render('registration/register.html.twig', [

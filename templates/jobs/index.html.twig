@@ -3,26 +3,24 @@
 {% block title %}Jobs index{% endblock %}
 
 {% block body %}
-    <h1>Jobs index</h1>
+    <h1>Les offres d'emplois que vous avez ajoutées</h1>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Title</th>
+                <th>Titre</th>
                 <th>Description</th>
-                <th>Address</th>
-                <th>Hours</th>
-                <th>Salary</th>
-                <th>Validated</th>
-                <th>Published</th>
+                <th>Adresse</th>
+                <th>Horaires</th>
+                <th>Salaire</th>
+                <th>Validée?</th>
+                <th>Publiée?</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for job in jobs %}
             <tr>
-                <td>{{ job.id }}</td>
                 <td>{{ job.title }}</td>
                 <td>{{ job.description }}</td>
                 <td>{{ job.address }}</td>
@@ -31,8 +29,7 @@
                 <td>{{ job.validated ? 'Yes' : 'No' }}</td>
                 <td>{{ job.published ? 'Yes' : 'No' }}</td>
                 <td>
-                    <a href="{{ path('jobs_show', {'id': job.id}) }}">show</a>
-                    <a href="{{ path('jobs_edit', {'id': job.id}) }}">edit</a>
+                    <a href="{{ path('jobs_edit', {'id': job.id}) }}">Modifier</a>
                 </td>
             </tr>
         {% else %}
@@ -43,5 +40,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('jobs_new') }}">Create new</a>
+    <a href="{{ path('userHome') }}">Espace personnel</a>
 {% endblock %}

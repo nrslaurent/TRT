@@ -3,6 +3,7 @@
 {% block title %}Nos offres d'emploi!{% endblock %}
 
 {% block body %}
+    {% include 'header.html.twig' %}
 
     <div class="d-flex flex-row row">
         {% for job in jobs %}
@@ -52,7 +53,7 @@
                                     {%endfor %}
                                     {% if userRole == 'OTHER_ROLE' %}
                                     {% else %}
-                                        <button type="button" class="btn btn-primary postulatedButton" jobId={{ job.id }} user=1>Je postule</button>
+                                        <button type="button" class="btn btn-primary postulatedButton" jobId={{ job.id }} user=1 validatedUser="{{ user.getValidated }}">Je postule</button>
                                     {% endif %}
 
                                 {% endif %}

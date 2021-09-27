@@ -73,12 +73,23 @@ class AdminController extends AbstractController
     /**
      * @Route("/{id}/edit", name="admin_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Users $user): Response
+    public function edit(Request $request, Users $user, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         $form = $this->createForm(AdminType::class, $user);
+        $oldPassword = $user->getPassword();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('password')->getData() == '$2y$13$029rQ3lnyigroXR2wsfdkevCrhjOPV.nd/rtLIoUf7ODQrd1dCGqe') {
+                $user->setPassword($oldPassword);
+            } else {
+                $user->setPassword(
+                    $passwordEncoder->encodePassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+            }
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('admin_index', [], Response::HTTP_SEE_OTHER);
@@ -95,6 +106,12 @@ class AdminController extends AbstractController
      */
     public function delete(Request $request, Users $user): Response
     {
+        if ($this->getUser()->getUserIdentifier() == $user->getEmail()) {
+            return new Response('<html><body>
+                <div style="font-size: large; color: #B0413E; text-align: center">Vous ne pouvez pas supprimer votre compte!</div>
+                <div><a href="/admin/">back to list</a></div>
+                </body></html>');
+        }
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($user);

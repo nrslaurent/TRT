@@ -1,13 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Companies{% endblock %}
+{% block title %}Modifier la société{% endblock %}
 
 {% block body %}
-    <h1>Edit Companies</h1>
+    <h1>Modifier la société</h1>
+    <div class="mb-3">
+        {{ include('companies/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+    </div>
+    <div class="mb-3">
+        {{ include('companies/_delete_form.html.twig') }}
+    </div>
 
-    {{ include('companies/_form.html.twig', {'button_label': 'Update'}) }}
 
-    <a href="{{ path('companies_index') }}">back to list</a>
 
-    {{ include('companies/_delete_form.html.twig') }}
+    <a href="{{ path('userHome') }}">revenir à l'espace personnel</a>
 {% endblock %}

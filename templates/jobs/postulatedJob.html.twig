@@ -1,0 +1,18 @@
+<div class="m-5">
+    <table class="table-primary  mt-5">
+        <tbody>
+        <tr>
+            <th>Intitulé du poste</th>
+            <td>{{ postulatedJob.job.title}}</td>
+        </tr>
+        <tr>
+            <th>Nom de la société</th>
+            <td>{{ postulatedJob.job.createdBy.company.name }}</td>
+        </tr>
+        <tr>
+            <th>Candidat</th>
+            <td> <a href="{{ path('users_show',{'id': postulatedJob.candidate.id}) }}">{{ postulatedJob.candidate.email }}</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>

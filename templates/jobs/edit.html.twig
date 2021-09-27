@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Jobs{% endblock %}
+{% block title %}Modifier l'offre{% endblock %}
 
 {% block body %}
-    <h1>Edit Jobs</h1>
+    <h1>Modifier l'offre</h1>
 
-    {{ include('jobs/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('jobs_index') }}">back to list</a>
+    {{ include('jobs/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
     {{ include('jobs/_delete_form.html.twig') }}
+
+    <a href="{{ path('userHome') }}">revenir à l'espace personnel</a>
 {% endblock %}
