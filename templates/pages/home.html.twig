@@ -3,7 +3,6 @@
 {% block title %}Nos offres d'emploi!{% endblock %}
 
 {% block body %}
-    {% include 'header.html.twig' %}
 
     <div class="d-flex flex-row row">
         {% for job in jobs %}
@@ -26,7 +25,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="jobModalLabel">{{ job.title }}</h5>
+                            <h5 class="modal-title text-info" id="jobModalLabel">{{ job.getCreatedBy.getCompany.name }} vous propose ce poste:</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">

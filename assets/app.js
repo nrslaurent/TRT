@@ -32,8 +32,3 @@ $('.postulatedButton').click(function () {
     }
 })
 
-
-
-
-
-

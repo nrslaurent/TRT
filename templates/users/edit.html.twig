@@ -7,10 +7,4 @@
 
     {{ include('users/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
-    {% for role in user.roles %}
-        {% if role != "ROLE_ADMIN" %}
-            <a href="{{ path('userHome') }}">revenir à l'espace personnel</a>
-        {% endif %}
-    {% endfor %}
-
 {% endblock %}

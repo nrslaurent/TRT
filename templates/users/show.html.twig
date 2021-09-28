@@ -1,35 +1,34 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Users{% endblock %}
-
+{% block header %}{% endblock %}
 {% block body %}
-
-    <table class="d-flex table table-borderless  mt-5">
-        <tbody>
+<table class="d-flex table table-light table-borderless mt-5">
+    <tbody>
+    <tr>
+        <th>Nom</th>
+        <td>{{ user.lastname }}</td>
+    </tr>
+    <tr>
+        <th>Prénom</th>
+        <td>{{ user.firstname }}</td>
+    </tr>
         <tr>
-            <th>Nom</th>
-            <td>{{ user.lastname }}</td>
+            <th>Adresse email</th>
+            <td>{{ user.email }}</td>
         </tr>
-        <tr>
-            <th>Prénom</th>
-            <td>{{ user.firstname }}</td>
-        </tr>
-            <tr>
-                <th>Adresse email</th>
-                <td>{{ user.email }}</td>
-            </tr>
-        </tbody>
-    </table>
-    <div>
-        <a href="{{ path('users_edit', {'id': user.id}) }}">Mettre à jour mon compte</a>
-    </div>
-    {% for role in user.roles%}
-        {% if role == 'ROLE_RECRUITER' and user.company is null %}
-            <div><a href="{{ path('companies_new') }}">Ajouter une société</a> </div>
-        {% elseif role == 'ROLE_RECRUITER' and user.company is not null %}
-                <div class="mt-5"><span class="text-secondary fw-bold">Société représentée: </span><a href="{{ path('companies_show', {'id':user.company.id}) }}">{{ user.company.name}}</a></div>
-        {% endif %}
-    {% endfor %}
+    </tbody>
+</table>
+<div>
+    <a class="btn btn-secondary mx-1" href="{{ path('users_edit', {'id': user.id}) }}">Mettre à jour mon compte</a>
+</div>
+{% for role in user.roles%}
+    {% if role == 'ROLE_RECRUITER' and user.company is null %}
+        <div><a href="{{ path('companies_new') }}">Ajouter une société</a> </div>
+    {% elseif role == 'ROLE_RECRUITER' and user.company is not null %}
+            <div class="mt-4"><span class="text-secondary fw-bold">Société représentée: </span><a href="{{ path('companies_show', {'id':user.company.id}) }}">{{ user.company.name}}</a></div>
+    {% endif %}
+{% endfor %}
 
 
 

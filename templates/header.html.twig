@@ -7,12 +7,20 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="headerNavbar">
                 <li class="nav-item">
-                    <a class="nav-link" id="linkTest" aria-current="page" href="{{ path('home') }}">Page d'accueil</a>
+                    <a class="nav-link" id="homeLinkHeader" aria-current="page" href="{{ path('home') }}">Page d'accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('userHome') }}">Espace personnel</a>
+                    <a class="nav-link" id="PersonalLinkHeader" href="{{ path('userHome') }}">Espace personnel</a>
                 </li>
             </ul>
         </div>
     </div>
+    <div>
+        {% if app.user is null %}
+            <a class="btn btn-secondary mx-3 h-auto fs" href="{{ path('app_register') }}">Inscription</a>
+        {% else %}
+            <a class="btn btn-secondary mx-3 h-auto" href="{{ path('app_logout') }}">Déconnexion</a>
+        {% endif %}
+    </div>
 </nav>
+

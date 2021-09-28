@@ -3,11 +3,10 @@
 {% block title %}Espace utilisateur{% endblock %}
 
 {% block body %}
-    {% include 'header.html.twig' %}
     <div class="example-wrapper">
-        <h1>Bonjour {{ user.getFirstname }},</h1>
-        <p class="text-secondary fw-bold mt-5">Mon compte</p>
-        <div class="border border-primary border-3 w-25 pb-3 mx-2">
+        <h2>Bonjour {{ user.getFirstname }},</h2>
+        <p class="text-secondary fw-bold mt-5">Votre compte</p>
+        <div class="bg-light border border-primary border-3 w-25 pb-3 mx-2">
             {% include 'users/show.html.twig' %}
         </div>
         {% for role in user.roles %}
@@ -20,7 +19,7 @@
                 <div class="mt-5"><a href="{{ path('jobs_index') }}">Voir la liste des emplois que vous avez publiés</a></div>
                 <div class="mt-5"><a href="{{ path('jobs_new') }}">Ajouter une offre d'emploi</a></div>
                 <div class="d-flex">
-                    <div class="mt-5 text-info"> candidatures validées: </div>
+                    <div class="mt-5 text-primary"> Candidatures validées: </div>
                     {% for postulatedJob in postulatedJobsToValidate %}
                         {% if postulatedJob.validated == 1 %}
                             <div class="w-25 table">
@@ -89,8 +88,5 @@
                 </div>
             {% endif %}
         {%endfor %}
-        <div class="m-3">
-            <a class="btn btn-secondary" href="{{ path('app_logout') }}">Se déconnecter</a>
-        </div>
     </div>
 {% endblock %}
