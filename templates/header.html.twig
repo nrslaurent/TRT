@@ -4,20 +4,24 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse mx-5 fw-bold" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="headerNavbar">
                 <li class="nav-item">
-                    <a class="nav-link" id="homeLinkHeader" aria-current="page" href="{{ path('home') }}">Page d'accueil</a>
+                    <a class="nav-link {% if app.request.attributes.get('_route') == 'home' %}active{% endif %}" aria-current="page" href="{{ path('home') }}">Page d'accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="PersonalLinkHeader" href="{{ path('userHome') }}">Espace personnel</a>
+                    <a class="nav-link {% if app.request.attributes.get('_route') == 'userHome' %}active{% endif %}" aria-current="page" href="{{ path('userHome') }}">Espace personnel</a>
                 </li>
             </ul>
         </div>
     </div>
     <div>
         {% if app.user is null %}
-            <a class="btn btn-secondary mx-3 h-auto fs" href="{{ path('app_register') }}">Inscription</a>
+            <div class="d-flex">
+                <a class="btn btn-secondary mx-3 h-auto fs" href="{{ path('app_login') }}">Connexion</a>
+                <a class="btn btn-secondary mx-3 h-auto fs" href="{{ path('app_register') }}">Inscription</a>
+            </div>
+
         {% else %}
             <a class="btn btn-secondary mx-3 h-auto" href="{{ path('app_logout') }}">Déconnexion</a>
         {% endif %}

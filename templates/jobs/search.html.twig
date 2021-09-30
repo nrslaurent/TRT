@@ -1,0 +1,14 @@
+<div class="d-flex flex-row row">
+    {% for job in jobs %}
+        <div class="col-2">
+            <div class="card m-3" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ job.title }}</h5>
+                    <p class="card-text">{{ job.description }}</p>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target='#modal{{ job.id }}'>
+                        En savoir plus
+                    </button>
+                </div>
+            </div>
+        </div>

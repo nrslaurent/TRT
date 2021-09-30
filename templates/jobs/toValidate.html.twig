@@ -1,11 +1,10 @@
-{% extends 'base.html.twig' %}
-{% block body %}
-<div class="m-5">
+
+<div class="m-3">
     <table class="table-primary  mt-5">
         <tbody>
         <tr>
             <th>Intitulé</th>
-            <td>{{ postulatedJobsToValidate }}</td>
+            <td>{{ job.title}}</td>
         </tr>
         <tr>
             <th>Description</th>
@@ -26,4 +25,4 @@
         </tbody>
     </table>
 </div>
-{% endblock %}
+

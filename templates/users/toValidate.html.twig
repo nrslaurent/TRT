@@ -1,6 +1,5 @@
-{% extends 'base.html.twig' %}
-{% block body %}
-<table class="d-flex table table-primary  mt-5">
+<div class="m-3">
+    <table class="d-flex table table-primary  mt-5">
     <tbody>
     <tr>
         <th>Nom</th>
@@ -14,6 +13,13 @@
         <th>Adresse email</th>
         <td>{{ user.email }}</td>
     </tr>
+    {% if user.cv %}
+        <tr>
+            <th>CV</th>
+            <td><a href="{{ asset('uploads/cv') }}/{{ user.cv }}">Voir mon CV</a></td>
+        </tr>
+    {% endif %}
     </tbody>
-</table>
-{% endblock %}
+    </table>
+</div>
+

@@ -7,6 +7,7 @@ use App\Repository\JobsRepository;
 use App\Repository\PostulatedJobsRepository;
 use App\Repository\UsersRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -16,9 +17,14 @@ class PagesController extends AbstractController
     /**
      * @Route("/", name="home")
      */
-    public function index(JobsRepository $jobsRepository): Response
+    public function index(JobsRepository $jobsRepository, Request $request): Response
     {
-        $allJobs = $jobsRepository->findAll();
+        $search = $request->query->get('search');
+        if ($search == null) {
+            $allJobs = $jobsRepository->jobsByIdDesc();
+        }else {
+            $allJobs = $jobsRepository->jobsSearch($search);
+        }
         $jobs = array();
         $jobsCandidates = array();
         $user = $this->getUser();

@@ -3,8 +3,8 @@
 {% block title %}Espace utilisateur{% endblock %}
 
 {% block body %}
-    <div class="example-wrapper">
-        <h2>Bonjour {{ user.getFirstname }},</h2>
+    <div class="example-wrapper mx-2">
+        <h2 class="text-dark mt-3">Bonjour {{ user.getFirstname }},</h2>
         <p class="text-secondary fw-bold mt-5">Votre compte</p>
         <div class="bg-light border border-primary border-3 w-25 pb-3 mx-2">
             {% include 'users/show.html.twig' %}
@@ -15,10 +15,12 @@
             {% endif %}
         {% endfor %}
         {% for role in user.roles %}
+            {# Recruiter can add a job if his account is validated and he added his company informations #}
             {% if role == "ROLE_RECRUITER" and user.getValidated == 1 and user.getCompany is not null %}
                 <div class="mt-5"><a href="{{ path('jobs_index') }}">Voir la liste des emplois que vous avez publiés</a></div>
                 <div class="mt-5"><a href="{{ path('jobs_new') }}">Ajouter une offre d'emploi</a></div>
                 <div class="d-flex">
+                    {# add all candidacies which are validated #}
                     <div class="mt-5 text-primary"> Candidatures validées: </div>
                     {% for postulatedJob in postulatedJobsToValidate %}
                         {% if postulatedJob.validated == 1 %}
@@ -30,13 +32,17 @@
                 </div>
             {% endif %}
         {% endfor %}
+
+        {# add all postulated jobs (only ROLE_USER can postulate) #}
         {% for job in jobsPostulated %}
-            <div><a href="{{ path('jobs_postulate', {'id': job.id}) }}">{{ job.title }}</a></div>
+            <div class="mt-5 text-secondary">Vous avez postulé à ces offres d'emploi: </div>
+            <div><a class="nav-link" href="{{ path('jobs_show', {'id': job.id}) }}">{{ job.title }}</a></div>
         {% endfor %}
+        {# For consultant, add accounts, jobs and candidacies to validate #}
         {% for role in user.roles %}
             {% if role == "ROLE_CONSULTANT" %}
                 <div class="d-flex">
-                    <div class="mt-5 text-info">Comptes à valider: </div>
+                    <div class="mt-5 text-secondary">Comptes à valider: </div>
                     {% for user in users %}
                         {% set userRole = "ROLE_USER" %}
                         {% for role in user.roles %}
@@ -47,41 +53,50 @@
                                 {% set userRole = "ROLE_OTHER" %}
                             {% endif %}
                         {% endfor %}
+                        {# We have to show all accounts to validate except consultant and admin accounts #}
                         {% if user.validatedBy is null and userRole != "ROLE_OTHER" %}
-                            <div class="w-25 table mx-5">
+                            <div class="w-25 table mx-3">
                                 {% include 'users/toValidate.html.twig' %}
-                                {% if userRole == 'ROLE_RECRUITER' %}
-                                    {% if user.company is not null %}
-                                        <p>RECRUTEUR</p>
-                                        <p>{{ user.company.name }} - {{ user.company.address }}</p>
-                                    {% endif%}
-                                {% endif %}
-                                <a class="btn btn-success" href="{{ path('users_validate',{'id': user.id}) }}">Valider</a>
-                                <a class="btn btn-danger" href="{{ path('users_reject',{'id': user.id}) }}">Rejeter</a>
+                                <div class="mx-3">
+                                    {% if userRole == 'ROLE_RECRUITER' %}
+                                        {% if user.company is not null %}
+                                            <p class="text-danger">RECRUTEUR</p>
+                                            <span class="fw-bold">{{ user.company.name }}</span> - {{ user.company.address }}
+                                        {% endif%}
+                                    {% endif %}
+                                </div>
+                                <div class="mx-3">
+                                    <a class="btn btn-success" href="{{ path('users_validate',{'id': user.id}) }}">Valider</a>
+                                    <a class="btn btn-danger" href="{{ path('users_reject',{'id': user.id}) }}">Rejeter</a>
+                                </div>
                             </div>
                         {% endif %}
                     {% endfor %}
                 </div>
                 <div class="d-flex">
-                    <div class="mt-5 text-info"> Offres d'emploi à validader: </div>
+                    <div class="mt-5 text-secondary"> Offres d'emploi à valider: </div>
                     {% for job in jobs %}
                         {% if job.checkedBy is null %}
                             <div class="w-25 table">
                                 {% include 'jobs/toValidate.html.twig' %}
-                                <a class="btn btn-success" href="{{ path('jobs_validate',{'id': job.id}) }}">Valider</a>
-                                <a class="btn btn-danger" href="{{ path('jobs_reject',{'id': job.id}) }}">Rejeter</a>
+                                <div class="mx-3">
+                                    <a class="btn btn-success" href="{{ path('jobs_validate',{'id': job.id}) }}">Valider</a>
+                                    <a class="btn btn-danger" href="{{ path('jobs_reject',{'id': job.id}) }}">Rejeter</a>
+                                </div>
                             </div>
                         {% endif %}
                     {% endfor %}
                 </div>
                 <div class="d-flex">
-                    <div class="mt-5 text-info"> candidatures à valider: </div>
+                    <div class="mt-5 text-secondary"> candidatures à valider: </div>
                     {% for postulatedJob in postulatedJobsToValidate %}
                         {% if postulatedJob.checkedBy is null %}
                             <div class="w-25 table">
                                 {% include 'jobs/postulatedJob.html.twig' %}
-                                <a class="btn btn-success" href="{{ path('PostulatedJob_validate',{'id': postulatedJob.id}) }}">Valider</a>
-                                <a class="btn btn-danger" href="{{ path('PostulatedJob_reject',{'id': postulatedJob.id}) }}">Rejeter</a>
+                                <div class="mx-3">
+                                    <a class="btn btn-success" href="{{ path('PostulatedJob_validate',{'id': postulatedJob.id}) }}">Valider</a>
+                                    <a class="btn btn-danger" href="{{ path('PostulatedJob_reject',{'id': postulatedJob.id}) }}">Rejeter</a>
+                                </div>
                             </div>
                         {% endif %}
                     {% endfor %}

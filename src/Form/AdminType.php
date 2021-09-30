@@ -16,7 +16,7 @@ class AdminType extends AbstractType
         $builder
             ->add('email')
             //->add('roles')
-            ->add('password', PasswordType::class,['label' => "password","required" => false, "empty_data" => '$2y$13$029rQ3lnyigroXR2wsfdkevCrhjOPV.nd/rtLIoUf7ODQrd1dCGqe','constraints' => [
+            ->add('password', PasswordType::class,['label' => "password","required" => false, 'mapped' => false,'constraints' => [
                 new Length([
                     'min' => 8,
                     'minMessage' => 'Le mot de passe doit avoir au moins {{ limit }} caractères',

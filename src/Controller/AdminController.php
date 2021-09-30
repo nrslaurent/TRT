@@ -80,7 +80,7 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('password')->getData() == '$2y$13$029rQ3lnyigroXR2wsfdkevCrhjOPV.nd/rtLIoUf7ODQrd1dCGqe') {
+            if ($form->get('password')->getData() == null) {
                 $user->setPassword($oldPassword);
             } else {
                 $user->setPassword(

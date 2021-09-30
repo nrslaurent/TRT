@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @Route("/users")
@@ -48,15 +50,16 @@ class UsersController extends AbstractController
     /**
      * @Route("/{id}/edit", name="users_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Users $user, UserPasswordEncoderInterface $passwordEncoder): Response
+    public function edit(Request $request, Users $user, UserPasswordEncoderInterface $passwordEncoder, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(UsersType::class, $user);
-        $oldPassword = $user->getPassword();
+        //check if the user has another role than ROLE_USER
+        if(count($user->getRoles()) > 1){
+            $form->remove('cv');
+        }
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('password')->getData() == '$2y$13$029rQ3lnyigroXR2wsfdkevCrhjOPV.nd/rtLIoUf7ODQrd1dCGqe') {
-                $user->setPassword($oldPassword);
-            } else {
+            if ($form->get('password')->getData() != null) {
                 $user->setPassword(
                     $passwordEncoder->encodePassword(
                         $user,
@@ -64,11 +67,34 @@ class UsersController extends AbstractController
                     )
                 );
             }
+            //check if the user has just the ROLE_USER
+            if (count($user->getRoles()) == 1) {
+                $cvFile = $form->get('cv')->getData();
+                if ($cvFile) {
+                    $originalFilename = pathinfo($cvFile->getClientOriginalName(), PATHINFO_FILENAME);
+
+                    // this is needed to safely include the file name as part of the URL
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$cvFile->guessExtension();
+
+                    // Move the file to the directory where brochures are stored
+                    try {
+                        $cvFile->move(
+                            $this->getParameter('cv_directory'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        echo $e->getMessage();
+                    }
+
+                    $user->setCv($newFilename);
+                }
+            }
+
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('userHome', [], Response::HTTP_SEE_OTHER);
         }
-
         return $this->renderForm('users/edit.html.twig', [
             'user' => $user,
             'form' => $form,

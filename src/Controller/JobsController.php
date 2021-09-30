@@ -200,4 +200,5 @@ class JobsController extends AbstractController
 
         return $this->redirectToRoute('userHome');
     }
+
 }
