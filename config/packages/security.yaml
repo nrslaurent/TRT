@@ -43,5 +43,6 @@ security:
         - { path: ^/jobs/postulate, roles: ROLE_USER }
         - { path: ^/jobs/validate, roles: ROLE_CONSULTANT }
         - { path: ^/jobs/new, roles: ROLE_RECRUITER }
+        - { path: ^/jobs/edit, roles: ROLE_RECRUITER }
         - { path: ^/userhome, roles: ROLE_USER }
 

@@ -32,13 +32,14 @@
                 </div>
             {% endif %}
         {% endfor %}
-
         {# add all postulated jobs (only ROLE_USER can postulate) #}
-        {% for job in jobsPostulated %}
+        {% if user.roles|length < 2 %}
             <div class="mt-5 text-secondary">Vous avez postulé à ces offres d'emploi: </div>
-            <div><a class="nav-link" href="{{ path('jobs_show', {'id': job.id}) }}">{{ job.title }}</a></div>
-        {% endfor %}
-        {# For consultant, add accounts, jobs and candidacies to validate #}
+            {% for job in jobsPostulated %}
+                <div><a class="nav-link" href="{{ path('jobs_show', {'id': job.id}) }}">{{ job.title }}</a></div>
+            {% endfor %}
+        {% endif %}
+        {# For consultant: add accounts, jobs and candidacies to validate #}
         {% for role in user.roles %}
             {% if role == "ROLE_CONSULTANT" %}
                 <div class="d-flex">
