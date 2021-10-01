@@ -59,11 +59,9 @@
                                             {% set userRole = 'OTHER_ROLE' %}
                                         {% endif %}
                                     {%endfor %}
-                                    {% if userRole == 'OTHER_ROLE' %}
-                                    {% else %}
+                                    {% if userRole == 'ROLE_USER' %}
                                         <button type="button" class="btn btn-primary postulatedButton" jobId={{ job.id }} user=1 validatedUser="{{ user.getValidated }}">Je postule</button>
                                     {% endif %}
-
                                 {% endif %}
                             {% else %}
                                 <button type="button" class="btn btn-primary postulatedButton" jobId={{ job.id }} user=0>Je postule</button>
